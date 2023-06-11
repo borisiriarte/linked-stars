@@ -1,0 +1,23 @@
+html {
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(217deg, rgb(5, 17, 43), rgba(25, 62, 143, 0.5) 90%),
+    linear-gradient(127deg, rgb(0, 0, 0), rgba(25, 62, 143, 0.5) 90%),
+    linear-gradient(336deg, rgba(82, 153, 93, 0.9), rgb(82, 153, 145) 50%);
+  ;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
