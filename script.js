@@ -8,6 +8,11 @@ const ctxs = [];
 let stars = [];
 let timeOutFunctionId;
 
+function numberOfStars() {
+  let { width, height } = useWindowDimensions();
+  return Math.floor(Math.min(width, height) / 6);
+}
+
 function setCanvasesDimensions() {
   $allCanvases.forEach((canvas) => {
     const { width, height } = useWindowDimensions();
@@ -31,7 +36,8 @@ function getStarProperties() {
 }
 
 function createStars() {
-  for (let i = 0; i < 200; i++) {
+  let number = numberOfStars();
+  for (let i = 0; i < number; i++) {
     let { x, y, size, color, shadowBlur, context } = getStarProperties();
     let star = new Star(x, y, color, shadowBlur, size, context);
 
@@ -54,6 +60,7 @@ function init() {
 function debounceResize(callback, time) {
   clearTimeout(timeOutFunctionId);
   timeOutFunctionId = setTimeout(callback, time);
+  console.log(stars);
 }
 
 function handleResize() {
