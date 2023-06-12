@@ -12,46 +12,6 @@ const ctxs = [];
 let stars = [];
 let timeOutFunctionId;
 
-let points = [
-  { x: 100, y: 100 },
-  { x: 500, y: 500 },
-  { x: 400, y: 800 },
-  { x: 900, y: 200 },
-];
-
-function link(a, b, context) {
-  context.beginPath();
-  context.lineWidth = 0.4;
-  context.strokeStyle = "white";
-
-  context.moveTo(a.x, a.y);
-
-  context.lineTo(b.x, b.y);
-
-  context.stroke();
-  context.closePath();
-}
-
-function drawProgressively(progress, A, B) {
-  // ctxs[0].clearRect(0, 0, width, height);
-
-  let inBtwnPoint = vLerp(A, B, progress);
-
-  link(A, inBtwnPoint, ctxs[0]);
-}
-
-function animateLoop(timing, draw, loop, duration, points, index, times) {
-  animate({
-    timing: timing,
-    draw: draw,
-    loop: loop,
-    duration: duration,
-    points: points,
-    i: index,
-    times: times,
-  });
-}
-
 //This function is responsible for getting the number of stars to be rendered
 function numberOfStars() {
   let { width, height } = useWindowDimensions();
@@ -98,6 +58,49 @@ function renderStars() {
   stars.forEach((star) => star.render());
 }
 
+let points = [
+  { x: 100, y: 100 },
+  { x: 500, y: 500 },
+  { x: 400, y: 800 },
+  { x: 900, y: 200 },
+];
+
+function link(a, b, context) {
+  context.beginPath();
+  context.lineWidth = 0.4;
+  context.strokeStyle = "white";
+
+  context.moveTo(a.x, a.y);
+
+  context.lineTo(b.x, b.y);
+
+  context.stroke();
+  context.closePath();
+}
+
+function drawProgressively(progress, points, i) {
+  ctxs[0].clearRect(0, 0, width, height);
+
+  let inBtwnPoint = vLerp(points[i], points[i + 1], progress);
+
+  link(points[i], inBtwnPoint, ctxs[0]);
+  for (let j = 0; j < i; j++) {
+    link(points[j], points[j + 1], ctxs[0]);
+  }
+}
+
+function animateLoop(timing, draw, loop, duration, points, index, times) {
+  animate({
+    timing: timing,
+    draw: draw,
+    loop: loop,
+    duration: duration,
+    points: points,
+    i: index,
+    times: times,
+  });
+}
+
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();
@@ -105,7 +108,7 @@ function init() {
     setTimeProgression,
     drawProgressively,
     animateLoop,
-    1000,
+    800,
     points,
     0,
     points.length - 2

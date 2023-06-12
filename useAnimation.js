@@ -17,14 +17,14 @@ export default function animate({
     // calculate the current animation state
     let progress = timing(timeFraction, "linear");
 
-    draw(progress, points[i], points[i + 1]);
+    draw(progress, points, i);
 
     if (timeFraction < 1) {
       requestAnimationFrame(animate);
     } else {
       if (i < times) {
         i++;
-        loop(timing, draw, loop, duration * (5 / 6), points, i, times);
+        loop(timing, draw, loop, duration * (2 / 3), points, i, times);
       }
     }
   });
