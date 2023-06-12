@@ -8,11 +8,28 @@ const ctxs = [];
 let stars = [];
 let timeOutFunctionId;
 
+function link(a, b, context) {
+  context.beginPath();
+  context.lineWidth = 1;
+  context.strokeStyle = "white";
+
+  context.moveTo(a.x, a.y);
+
+  context.lineTo(b.x, b.y);
+
+  context.stroke();
+  context.closePath();
+}
+
+//This function is responsible for getting the mouse position
+
+//This function is responsible for getting the number of stars to be rendered
 function numberOfStars() {
   let { width, height } = useWindowDimensions();
   return Math.floor(Math.min(width, height) / 6);
 }
 
+//This piece of code is responsible for setting the dimensions of the canvases
 function setCanvasesDimensions() {
   $allCanvases.forEach((canvas) => {
     const { width, height } = useWindowDimensions();
@@ -22,6 +39,7 @@ function setCanvasesDimensions() {
   });
 }
 
+//This part of the code is responsible for getting the properties of the star
 function getStarProperties() {
   let { width: w, height: h } = useWindowDimensions();
   let context = ctxs[0];
@@ -35,6 +53,7 @@ function getStarProperties() {
   };
 }
 
+//this part of the code is responsible for creating the stars
 function createStars() {
   let number = numberOfStars();
   for (let i = 0; i < number; i++) {
@@ -45,6 +64,7 @@ function createStars() {
   }
 }
 
+//This part of the code is responsible for rendering the stars
 function renderStars() {
   stars.forEach((star) => star.render());
 }
@@ -52,20 +72,23 @@ function renderStars() {
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();
-  createStars();
-  renderStars();
+  link({ x: 100, y: 100 }, { x: 200, y: 200 }, ctxs[0]);
+  // createStars();
+  // renderStars();
 }
 
 //These two function handle the resize event
 function debounceResize(callback, time) {
   clearTimeout(timeOutFunctionId);
   timeOutFunctionId = setTimeout(callback, time);
-  console.log(stars);
 }
 
+//This function is responsible for handling the resize event
 function handleResize() {
   let { width, height } = useWindowDimensions();
-  ctxs[0].clearRect(0, 0, width, height);
+  ctxs.forEach((ctx) => {
+    ctx.clearRect(0, 0, width, height);
+  });
   stars = [];
 
   debounceResize(init, 800);

@@ -13,8 +13,6 @@ export default class Star {
     this.#shadowBlur = shadowBlur;
     this.#size = size + 0.5;
     this.#ctx = ctx;
-
-    // this.#drawStar();
   }
 
   #drawStar() {
