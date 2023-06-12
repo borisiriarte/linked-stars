@@ -1,16 +1,27 @@
 import Star from "./Star.js";
 import { colors } from "./colors.js";
 import { getRndNumberBtwn } from "./getRndNumberBtwn.js";
+import setTimeProgression from "./setTimeProgression.js";
+import animate from "./useAnimation.js";
 import { useWindowDimensions } from "./useWindowDimensions.js";
+import vLerp from "./vLerp.js";
+let { width, height } = useWindowDimensions();
 
 const $allCanvases = document.querySelectorAll(".canvas");
 const ctxs = [];
 let stars = [];
 let timeOutFunctionId;
 
+let points = [
+  { x: 100, y: 100 },
+  { x: 500, y: 500 },
+  { x: 400, y: 800 },
+  { x: 900, y: 200 },
+];
+
 function link(a, b, context) {
   context.beginPath();
-  context.lineWidth = 1;
+  context.lineWidth = 0.4;
   context.strokeStyle = "white";
 
   context.moveTo(a.x, a.y);
@@ -21,7 +32,25 @@ function link(a, b, context) {
   context.closePath();
 }
 
-//This function is responsible for getting the mouse position
+function drawProgressively(progress, A, B) {
+  // ctxs[0].clearRect(0, 0, width, height);
+
+  let inBtwnPoint = vLerp(A, B, progress);
+
+  link(A, inBtwnPoint, ctxs[0]);
+}
+
+function animateLoop(timing, draw, loop, duration, points, index, times) {
+  animate({
+    timing: timing,
+    draw: draw,
+    loop: loop,
+    duration: duration,
+    points: points,
+    i: index,
+    times: times,
+  });
+}
 
 //This function is responsible for getting the number of stars to be rendered
 function numberOfStars() {
@@ -72,7 +101,15 @@ function renderStars() {
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();
-  link({ x: 100, y: 100 }, { x: 200, y: 200 }, ctxs[0]);
+  animateLoop(
+    setTimeProgression,
+    drawProgressively,
+    animateLoop,
+    1000,
+    points,
+    0,
+    points.length - 2
+  );
   // createStars();
   // renderStars();
 }
