@@ -13,12 +13,6 @@ const ctxs = [];
 let stars = [];
 let timeOutFunctionId;
 
-//This function is responsible for getting the number of stars to be rendered
-function numberOfStars() {
-  let { width, height } = useWindowDimensions();
-  return Math.floor(Math.min(width, height) / 6);
-}
-
 //This piece of code is responsible for setting the dimensions of the canvases
 function setCanvasesDimensions() {
   $allCanvases.forEach((canvas) => {
@@ -27,6 +21,14 @@ function setCanvasesDimensions() {
     canvas.height = height;
     ctxs.push(canvas.getContext("2d", { willReadFRequently: true }));
   });
+}
+
+//~This part of the code is responsible for everything realted to the stars
+
+//This function is responsible for getting the number of stars to be rendered
+function numberOfStars() {
+  let { width, height } = useWindowDimensions();
+  return Math.floor(Math.min(width, height) / 6);
 }
 
 //This part of the code is responsible for getting the properties of the star
@@ -59,37 +61,37 @@ function renderStars() {
   stars.forEach((star) => star.render());
 }
 
-let points = [
-  { x: 100, y: 100 },
-  { x: 500, y: 500 },
-  { x: 400, y: 800 },
-  { x: 900, y: 200 },
-];
+function getNStars(nStars) {
+  let chosenStars = [];
+  for (let i = 0; i < nStars; i++) {
+    let star = Math.floor(getRndNumberBtwn(0, stars.length));
+    chosenStars.push(stars[star]);
+  }
 
-function link(a, b, context, color) {
+  return chosenStars;
+}
+
+//~---------------------------------------
+
+function link(a, b, context, color, times) {
   const link = new Link(a, b, context, color);
 
-  // context.beginPath();
-  // context.lineWidth = 0.4;
-  // context.strokeStyle = "white";
-
-  // context.moveTo(a.x, a.y);
-
-  // context.lineTo(b.x, b.y);
-
-  // context.stroke();
-  // context.closePath();
+  link.moveToPoint();
+  for (let i = 0; i < times; i++) {
+    link.lineToPoint();
+  }
+  link.closePath();
 }
 
 //this part of the code is responsible for drawing the link between the stars
 function drawProgressively(progress, points, i) {
-  ctxs[0].clearRect(0, 0, width, height);
+  ctxs[1].clearRect(0, 0, width, height);
 
   let inBtwnPoint = vLerp(points[i], points[i + 1], progress);
 
-  link(points[i], inBtwnPoint, ctxs[0]);
+  link(points[i], inBtwnPoint, ctxs[1], "white", 1);
   for (let j = 0; j < i; j++) {
-    link(points[j], points[j + 1], ctxs[0]);
+    link(points[j], points[j + 1], ctxs[1], "white", 3);
   }
 }
 
@@ -98,8 +100,8 @@ function vanishProgressively(progress, points) {}
 function animateLoop(
   timing,
   draw,
-  loop,
   vanish,
+  loop,
   duration,
   points,
   index,
@@ -108,8 +110,8 @@ function animateLoop(
   animate({
     timing: timing,
     draw: draw,
-    loop: loop,
     vanish: vanish,
+    loop: loop,
     duration: duration,
     points: points,
     i: index,
@@ -117,21 +119,25 @@ function animateLoop(
   });
 }
 
-//This section initizlizes and listens if there's a change on window size
+//~This section initizlizes and listens if there's a change on window size
+
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();
+  createStars();
+  // renderStars();
+  let chosenStars = getNStars(5);
+  console.log(chosenStars);
   animateLoop(
     setTimeProgression,
     drawProgressively,
+    vanishProgressively,
     animateLoop,
     800,
-    points,
+    chosenStars,
     0,
-    points.length - 2
+    chosenStars.length - 2
   );
-  // createStars();
-  // renderStars();
 }
 
 //These two function handle the resize event

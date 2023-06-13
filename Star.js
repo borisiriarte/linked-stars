@@ -7,8 +7,8 @@ export default class Star {
   #shadowBlur;
 
   constructor(x, y, shadowColor, shadowBlur, size, ctx) {
-    this.#x = x;
-    this.#y = y;
+    this.x = x;
+    this.y = y; //check this part
     this.#shadowColor = shadowColor;
     this.#shadowBlur = shadowBlur;
     this.#size = size + 0.5;
