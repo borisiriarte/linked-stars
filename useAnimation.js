@@ -7,6 +7,7 @@ export default function animate({
   i,
   times,
   timeType,
+  ctx,
 }) {
   let start = performance.now();
 
@@ -20,9 +21,9 @@ export default function animate({
 
     // draw it!
     if (timeType === "linear") {
-      draw[0](progress, points, i);
+      draw[0](progress, points, i, ctx);
     } else {
-      draw[1](progress, points);
+      draw[1](progress, points, ctx);
     }
 
     if (timeFraction < 1) {
@@ -38,10 +39,11 @@ export default function animate({
           points,
           i,
           times,
-          timeType
+          timeType,
+          ctx
         );
       } else {
-        loop(timing, draw, () => {}, 1200, points, null, null, "quad");
+        loop(timing, draw, () => {}, 1200, points, null, null, "quad", ctx);
       }
     }
   });

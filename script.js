@@ -84,29 +84,40 @@ function link(a, b, context, color) {
 }
 
 //this part of the code is responsible for drawing the function animations
-function drawProgressively(progress, points, i) {
-  ctxs[1].clearRect(0, 0, width, height);
+function drawProgressively(progress, points, i, ctx) {
+  ctx.clearRect(0, 0, width, height);
+  let { r, g, b, a } = white[0];
 
   let inBtwnPoint = vLerp(points[i], points[i + 1], progress);
 
-  link(points[i], inBtwnPoint, ctxs[1], "white");
+  link(points[i], inBtwnPoint, ctx, `rgba(${r}, ${g}, ${b}, ${a})`);
   for (let j = 0; j < i; j++) {
-    link(points[j], points[j + 1], ctxs[1], "white");
+    link(points[j], points[j + 1], ctx, `rgba(${r}, ${g}, ${b}, ${a})`);
   }
 }
 
-function vanishProgressively(progress, points) {
-  ctxs[1].clearRect(0, 0, width, height);
+function vanishProgressively(progress, points, ctx) {
+  ctx.clearRect(0, 0, width, height);
 
   let inBtwnOpacity = vLerp(white[0], white[1], progress);
   let { r, g, b, a } = inBtwnOpacity;
 
   for (let j = 0; j < points.length - 1; j++) {
-    link(points[j], points[j + 1], ctxs[1], `rgba(${r}, ${g}, ${b}, ${a})`);
+    link(points[j], points[j + 1], ctx, `rgba(${r}, ${g}, ${b}, ${a})`);
   }
 }
 
-function animateLoop(timing, draw, loop, duration, points, i, times, timeType) {
+function animateLoop(
+  timing,
+  draw,
+  loop,
+  duration,
+  points,
+  i,
+  times,
+  timeType,
+  ctx
+) {
   animate({
     timing: timing,
     draw: draw,
@@ -116,11 +127,12 @@ function animateLoop(timing, draw, loop, duration, points, i, times, timeType) {
     i: i,
     times: times,
     timeType: timeType,
+    ctx: ctx,
   });
 }
 
 //Configuration params for the animation function
-function animationConfig() {
+function animationConfig(ctx) {
   let rndNumOfStars = getRndNumberBtwn(3, 7);
   let chosenStars = getNStars(rndNumOfStars);
   animateLoop(
@@ -131,26 +143,28 @@ function animationConfig() {
     chosenStars,
     0,
     chosenStars.length - 2,
-    "linear"
+    "linear",
+    ctx
   );
 }
 
 //Delay
-function delay(delay, callback) {
+function delay(delay, callback, ctx) {
   return new Promise((resolve) =>
     setTimeout(() => {
-      resolve(callback());
+      resolve(callback(ctx));
     }, delay)
   );
 }
 
 //InfiniteLoop
-async function InfiniteLoop() {
-  await delay(1000, animationConfig);
-  await delay(1000, animationConfig);
-  await delay(1000, animationConfig);
+async function InfiniteLoop(ctxsToBeUsed) {
+  for (const ctx of ctxsToBeUsed) {
+    let rndDelay = getRndNumberBtwn(1500, 5000);
+    await delay(rndDelay, animationConfig, ctx);
+  }
 
-  delay(2000, InfiniteLoop);
+  await delay(1000, InfiniteLoop, ctxsToBeUsed);
 }
 
 //~This section initizlizes and listens if there's a change on window size
@@ -158,9 +172,10 @@ async function InfiniteLoop() {
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();
+  let ctxsLink = ctxs.slice(1);
   createStars();
   renderStars();
-  InfiniteLoop();
+  InfiniteLoop(ctxsLink);
 }
 
 //These two function handle the resize event
