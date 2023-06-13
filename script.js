@@ -1,3 +1,4 @@
+import Link from "./Link.js";
 import Star from "./Star.js";
 import { colors } from "./colors.js";
 import { getRndNumberBtwn } from "./getRndNumberBtwn.js";
@@ -65,19 +66,22 @@ let points = [
   { x: 900, y: 200 },
 ];
 
-function link(a, b, context) {
-  context.beginPath();
-  context.lineWidth = 0.4;
-  context.strokeStyle = "white";
+function link(a, b, context, color) {
+  const link = new Link(a, b, context, color);
 
-  context.moveTo(a.x, a.y);
+  // context.beginPath();
+  // context.lineWidth = 0.4;
+  // context.strokeStyle = "white";
 
-  context.lineTo(b.x, b.y);
+  // context.moveTo(a.x, a.y);
 
-  context.stroke();
-  context.closePath();
+  // context.lineTo(b.x, b.y);
+
+  // context.stroke();
+  // context.closePath();
 }
 
+//this part of the code is responsible for drawing the link between the stars
 function drawProgressively(progress, points, i) {
   ctxs[0].clearRect(0, 0, width, height);
 
@@ -89,11 +93,23 @@ function drawProgressively(progress, points, i) {
   }
 }
 
-function animateLoop(timing, draw, loop, duration, points, index, times) {
+function vanishProgressively(progress, points) {}
+
+function animateLoop(
+  timing,
+  draw,
+  loop,
+  vanish,
+  duration,
+  points,
+  index,
+  times
+) {
   animate({
     timing: timing,
     draw: draw,
     loop: loop,
+    vanish: vanish,
     duration: duration,
     points: points,
     i: index,
@@ -101,6 +117,7 @@ function animateLoop(timing, draw, loop, duration, points, index, times) {
   });
 }
 
+//This section initizlizes and listens if there's a change on window size
 //This function inizializes the canvases and sets the dimensions
 function init() {
   setCanvasesDimensions();

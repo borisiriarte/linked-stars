@@ -2,6 +2,7 @@ export default function animate({
   timing,
   draw,
   loop,
+  vanish,
   duration,
   points,
   i,
@@ -25,6 +26,7 @@ export default function animate({
       if (i < times) {
         i++;
         loop(timing, draw, loop, duration * (2 / 3), points, i, times);
+      } else {
       }
     }
   });
