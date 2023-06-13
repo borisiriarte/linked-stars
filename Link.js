@@ -12,7 +12,7 @@ export default class Link {
 
   moveToPoint() {
     this.#context.beginPath();
-    this.#context.lineWidth = 0.4;
+    this.#context.lineWidth = 0.2;
     this.#context.strokeStyle = this.#color;
 
     this.#context.moveTo(this.#a.x, this.#a.y);

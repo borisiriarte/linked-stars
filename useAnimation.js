@@ -34,7 +34,7 @@ export default function animate({
           timing,
           draw,
           loop,
-          duration * (2 / 3),
+          duration * (5 / 6),
           points,
           i,
           times,

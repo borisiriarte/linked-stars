@@ -1,6 +1,6 @@
 export default class Star {
-  #x;
-  #y;
+  // #x;
+  // #y;
   #shadowColor;
   #size;
   #ctx;
@@ -22,14 +22,14 @@ export default class Star {
     this.#ctx.shadowBlur = this.#shadowBlur;
 
     this.#ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.03)`;
-    this.#ctx.arc(this.#x, this.#y, this.#size + 2, 0, Math.PI * 2, false);
+    this.#ctx.arc(this.x, this.y, this.#size + 2, 0, Math.PI * 2, false);
 
     this.#ctx.fill();
     this.#ctx.closePath();
 
     this.#ctx.beginPath();
     this.#ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    this.#ctx.arc(this.#x, this.#y, this.#size, 0, Math.PI * 2, false);
+    this.#ctx.arc(this.x, this.y, this.#size, 0, Math.PI * 2, false);
     this.#ctx.fill();
     this.#ctx.closePath();
   }

@@ -39,7 +39,7 @@ function getStarProperties() {
     x: getRndNumberBtwn(0, w),
     y: getRndNumberBtwn(0, h),
     size: getRndNumberBtwn(0, 1),
-    color: colors[Math.floor(getRndNumberBtwn(0, colors.length))],
+    color: colors[Math.floor(getRndNumberBtwn(0, colors.length - 1))],
     shadowBlur: getRndNumberBtwn(2, 15),
     context,
   };
@@ -78,9 +78,6 @@ function link(a, b, context, color) {
   const link = new Link(a, b, context, color);
 
   link.moveToPoint();
-  // for (let i = 0; i < times; i++) {
-  //   link.lineToPoint();
-  // }
 
   link.lineToPoint();
   link.closePath();
@@ -122,37 +119,48 @@ function animateLoop(timing, draw, loop, duration, points, i, times, timeType) {
   });
 }
 
-//Delay
+//Configuration params for the animation function
+function animationConfig() {
+  let rndNumOfStars = getRndNumberBtwn(3, 7);
+  let chosenStars = getNStars(rndNumOfStars);
+  animateLoop(
+    setTimeProgression,
+    [drawProgressively, vanishProgressively],
+    animateLoop,
+    800,
+    chosenStars,
+    0,
+    chosenStars.length - 2,
+    "linear"
+  );
+}
 
-function delay(delay, hello) {
+//Delay
+function delay(delay, callback) {
   return new Promise((resolve) =>
     setTimeout(() => {
-      resolve(hello);
+      resolve(callback());
     }, delay)
   );
+}
+
+//InfiniteLoop
+async function InfiniteLoop() {
+  await delay(1000, animationConfig);
+  await delay(1000, animationConfig);
+  await delay(1000, animationConfig);
+
+  delay(2000, InfiniteLoop);
 }
 
 //~This section initizlizes and listens if there's a change on window size
 
 //This function inizializes the canvases and sets the dimensions
-async function init() {
+function init() {
   setCanvasesDimensions();
-  console.log(await delay(2000, "Hola perras"));
-  console.log(await delay(5000, "Hola perras"));
-  console.log("Hola Boris");
   createStars();
-  // renderStars();
-  let chosenStars = getNStars(5);
-  // animateLoop(
-  //   setTimeProgression,
-  //   [drawProgressively, vanishProgressively],
-  //   animateLoop,
-  //   800,
-  //   chosenStars,
-  //   0,
-  //   chosenStars.length - 2,
-  //   "linear"
-  // );
+  renderStars();
+  InfiniteLoop();
 }
 
 //These two function handle the resize event
@@ -168,7 +176,6 @@ function handleResize() {
     ctx.clearRect(0, 0, width, height);
   });
   stars = [];
-
   debounceResize(init, 800);
 }
 
