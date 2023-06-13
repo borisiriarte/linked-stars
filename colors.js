@@ -9,3 +9,8 @@ export const colors = [
   // "rgb(77, 173, 236)",
   // "rgb(226, 142, 217)",
 ];
+
+export const white = [
+  { r: 255, g: 255, b: 255, a: 1 },
+  { r: 255, g: 255, b: 255, a: 0 },
+];

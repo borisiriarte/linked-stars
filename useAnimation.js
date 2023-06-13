@@ -1,12 +1,12 @@
 export default function animate({
   timing,
   draw,
-  vanish,
   loop,
   duration,
   points,
   i,
   times,
+  timeType,
 }) {
   let start = performance.now();
 
@@ -16,17 +16,32 @@ export default function animate({
     if (timeFraction > 1) timeFraction = 1;
 
     // calculate the current animation state
-    let progress = timing(timeFraction, "linear");
+    let progress = timing(timeFraction, timeType);
 
-    draw(progress, points, i);
+    // draw it!
+    if (timeType === "linear") {
+      draw[0](progress, points, i);
+    } else {
+      draw[1](progress, points);
+    }
 
     if (timeFraction < 1) {
       requestAnimationFrame(animate);
     } else {
       if (i < times) {
         i++;
-        loop(timing, draw, vanish, loop, duration * (2 / 3), points, i, times);
+        loop(
+          timing,
+          draw,
+          loop,
+          duration * (2 / 3),
+          points,
+          i,
+          times,
+          timeType
+        );
       } else {
+        loop(timing, draw, () => {}, 1200, points, null, null, "quad");
       }
     }
   });

@@ -1,6 +1,6 @@
 import Link from "./Link.js";
 import Star from "./Star.js";
-import { colors } from "./colors.js";
+import { colors, white } from "./colors.js";
 import { getRndNumberBtwn } from "./getRndNumberBtwn.js";
 import setTimeProgression from "./setTimeProgression.js";
 import animate from "./useAnimation.js";
@@ -61,6 +61,7 @@ function renderStars() {
   stars.forEach((star) => star.render());
 }
 
+//This code is responsible for pushing a n number of stars`
 function getNStars(nStars) {
   let chosenStars = [];
   for (let i = 0; i < nStars; i++) {
@@ -73,71 +74,85 @@ function getNStars(nStars) {
 
 //~---------------------------------------
 
-function link(a, b, context, color, times) {
+function link(a, b, context, color) {
   const link = new Link(a, b, context, color);
 
   link.moveToPoint();
-  for (let i = 0; i < times; i++) {
-    link.lineToPoint();
-  }
+  // for (let i = 0; i < times; i++) {
+  //   link.lineToPoint();
+  // }
+
+  link.lineToPoint();
   link.closePath();
 }
 
-//this part of the code is responsible for drawing the link between the stars
+//this part of the code is responsible for drawing the function animations
 function drawProgressively(progress, points, i) {
   ctxs[1].clearRect(0, 0, width, height);
 
   let inBtwnPoint = vLerp(points[i], points[i + 1], progress);
 
-  link(points[i], inBtwnPoint, ctxs[1], "white", 1);
+  link(points[i], inBtwnPoint, ctxs[1], "white");
   for (let j = 0; j < i; j++) {
-    link(points[j], points[j + 1], ctxs[1], "white", 3);
+    link(points[j], points[j + 1], ctxs[1], "white");
   }
 }
 
-function vanishProgressively(progress, points) {}
+function vanishProgressively(progress, points) {
+  ctxs[1].clearRect(0, 0, width, height);
 
-function animateLoop(
-  timing,
-  draw,
-  vanish,
-  loop,
-  duration,
-  points,
-  index,
-  times
-) {
+  let inBtwnOpacity = vLerp(white[0], white[1], progress);
+  let { r, g, b, a } = inBtwnOpacity;
+
+  for (let j = 0; j < points.length - 1; j++) {
+    link(points[j], points[j + 1], ctxs[1], `rgba(${r}, ${g}, ${b}, ${a})`);
+  }
+}
+
+function animateLoop(timing, draw, loop, duration, points, i, times, timeType) {
   animate({
     timing: timing,
     draw: draw,
-    vanish: vanish,
     loop: loop,
     duration: duration,
     points: points,
-    i: index,
+    i: i,
     times: times,
+    timeType: timeType,
   });
+}
+
+//Delay
+
+function delay(delay, hello) {
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      resolve(hello);
+    }, delay)
+  );
 }
 
 //~This section initizlizes and listens if there's a change on window size
 
 //This function inizializes the canvases and sets the dimensions
-function init() {
+async function init() {
   setCanvasesDimensions();
+  console.log(await delay(2000, "Hola perras"));
+  console.log(await delay(5000, "Hola perras"));
+  console.log("Hola Boris");
   createStars();
   // renderStars();
   let chosenStars = getNStars(5);
-  console.log(chosenStars);
-  animateLoop(
-    setTimeProgression,
-    drawProgressively,
-    vanishProgressively,
-    animateLoop,
-    800,
-    chosenStars,
-    0,
-    chosenStars.length - 2
-  );
+  // animateLoop(
+  //   setTimeProgression,
+  //   [drawProgressively, vanishProgressively],
+  //   animateLoop,
+  //   800,
+  //   chosenStars,
+  //   0,
+  //   chosenStars.length - 2,
+  //   "linear"
+  // );
 }
 
 //These two function handle the resize event
