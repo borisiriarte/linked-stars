@@ -6,12 +6,12 @@ import setTimeProgression from "./setTimeProgression.js";
 import animate from "./useAnimation.js";
 import { useWindowDimensions } from "./useWindowDimensions.js";
 import vLerp from "./vLerp.js";
-let { width, height } = useWindowDimensions();
 
 const $allCanvases = document.querySelectorAll(".canvas");
-const ctxs = [];
+let ctxs = [];
 let stars = [];
 let timeOutFunctionId;
+// let onResize = false;
 
 //This piece of code is responsible for setting the dimensions of the canvases
 function setCanvasesDimensions() {
@@ -85,6 +85,7 @@ function link(a, b, context, color) {
 
 //this part of the code is responsible for drawing the function animations
 function drawProgressively(progress, points, i, ctx) {
+  let { width, height } = useWindowDimensions();
   ctx.clearRect(0, 0, width, height);
   let { r, g, b, a } = white[0];
 
@@ -97,6 +98,7 @@ function drawProgressively(progress, points, i, ctx) {
 }
 
 function vanishProgressively(progress, points, ctx) {
+  let { width, height } = useWindowDimensions();
   ctx.clearRect(0, 0, width, height);
 
   let inBtwnOpacity = vLerp(white[0], white[1], progress);
@@ -159,12 +161,14 @@ function delay(delay, callback, ctx) {
 
 //InfiniteLoop
 async function InfiniteLoop(ctxsToBeUsed) {
+  // if (onResize) return;
+
   for (const ctx of ctxsToBeUsed) {
     let rndDelay = getRndNumberBtwn(1500, 5000);
     await delay(rndDelay, animationConfig, ctx);
   }
 
-  await delay(1000, InfiniteLoop, ctxsToBeUsed);
+  return await delay(1200, InfiniteLoop, ctxsToBeUsed);
 }
 
 //~This section initizlizes and listens if there's a change on window size
@@ -186,12 +190,21 @@ function debounceResize(callback, time) {
 
 //This function is responsible for handling the resize event
 function handleResize() {
+  // onResize = true;
   let { width, height } = useWindowDimensions();
+  stars = [];
   ctxs.forEach((ctx) => {
     ctx.clearRect(0, 0, width, height);
   });
-  stars = [];
-  debounceResize(init, 800);
+  ctxs = [];
+
+  debounceResize(() => {
+    setCanvasesDimensions();
+    createStars();
+    renderStars();
+    // onResize = false;
+    console.clear();
+  }, 1200);
 }
 
 document.addEventListener("DOMContentLoaded", init);
